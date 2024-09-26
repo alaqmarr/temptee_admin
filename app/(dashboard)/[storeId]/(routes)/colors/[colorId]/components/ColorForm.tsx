@@ -30,7 +30,9 @@ interface ColorFormProps {
 
 const formSchema = z.object({
   name: z.string().min(1),
-  value: z.string().min(1),
+  value: z.string().min(4).regex(/^#/, {
+    message: "Invalid color value",
+  }),
 });
 
 type ColorFormValues = z.infer<typeof formSchema>;
@@ -62,7 +64,7 @@ const ColorForm: React.FC<ColorFormProps> = ({ initialData }) => {
         await axios.patch(
           `/api/${params.storeId}/colors/${params.colorId}`,
           values
-        );  
+        );
       } else {
         await axios.post(`/api/${params.storeId}/colors`, values);
       }
@@ -121,7 +123,7 @@ const ColorForm: React.FC<ColorFormProps> = ({ initialData }) => {
           onSubmit={form.handleSubmit(onSubmit)}
           className="space-y-8 w-full"
         >
-          <div className="grid grid-cols-3 gap-8">
+          <div className="grid grid-cols-3 gap-8 items-center">
             <FormField
               control={form.control}
               name="name"
@@ -152,11 +154,19 @@ const ColorForm: React.FC<ColorFormProps> = ({ initialData }) => {
                       disabled={loading}
                       placeholder="Color Value"
                     />
+                    
                   </FormControl>
                   <FormMessage />
                 </FormItem>
+                
               )}
             />
+            <div className="h-10 w-10 rounded-full border"
+              style={{ backgroundColor: form.watch("value") }}
+              >
+
+              </div>
+              
           </div>
           <Button variant="default" disabled={loading} type="submit">
             {action}

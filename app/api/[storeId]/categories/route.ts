@@ -66,15 +66,15 @@ export async function GET(
         });
       }
   
-      const billboards = await prismadb.billboard.findMany({
+      const category = await prismadb.category.findMany({
         where: {
           storeId: params.storeId,
         },
       });
   
-      return NextResponse.json(billboards);
+      return NextResponse.json(category);
     } catch (error) {
-      console.error("[BILLBOARDS_GET]", error);
+      console.error("[CATEGORY_GET]", error);
       return new NextResponse("Internal Error", { status: 500 });
     }
   }

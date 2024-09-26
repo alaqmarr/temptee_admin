@@ -24,7 +24,6 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   }, []);
 
   const onUpload = (result: any) => {
-    console.log(result);
     onChange(result.info.secure_url);
   };
   if (!isMounted) return null;
@@ -38,15 +37,16 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
           >
             <div className="z-10 absolute top-2 right-2">
               <Button
-                type="button"
                 variant={"destructive"}
-                size={"icon"}
                 onClick={() => onRemove(url)}
+                size={"icon"}
+                type="button"
+                className="rounded-lg"
               >
-                <Trash className="h-4 w-4" />
+                <Trash className="w-4 h-4" />
               </Button>
             </div>
-            <Image fill className="object-cover" src={url} alt="Image" />
+            <Image fill src={url} className="object-cover" alt={url} />
           </div>
         ))}
       </div>
@@ -60,11 +60,11 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
             <Button
               type="button"
               disabled={disabled}
-              variant={"secondary"}
               onClick={onClick}
+              variant={"secondary"}
             >
-              <ImagePlusIcon className="mr-2 w-4 h-4" />
-              Upload an Image
+              <ImagePlusIcon className="w-4 h-4" />
+              Upload Image
             </Button>
           );
         }}

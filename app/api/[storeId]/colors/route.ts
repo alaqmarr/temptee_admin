@@ -74,7 +74,7 @@ export async function GET(
   
       return NextResponse.json(colors);
     } catch (error) {
-      console.error("[BILLBOARDS_GET]", error);
+      console.error("[COLORS_GET]", error);
       return new NextResponse("Internal Error", { status: 500 });
     }
   }
