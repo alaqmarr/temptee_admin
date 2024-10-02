@@ -49,6 +49,8 @@ export async function PATCH(
       colorId,
       isFeatured,
       isArchived,
+      description,
+      quantity
     } = body;
 
     if (!name) {
@@ -101,6 +103,8 @@ export async function PATCH(
         isFeatured,
         isArchived,
         storeId: params.storeId,
+        description,
+        quantity
       },
     });
 

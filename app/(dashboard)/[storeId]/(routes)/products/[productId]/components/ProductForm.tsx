@@ -23,6 +23,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
+import { Textarea } from "@/components/ui/textarea";
 import { useOrigin } from "@/hooks/use-origin";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Category, Color, Image, Product, Size } from "@prisma/client";
@@ -57,6 +58,8 @@ const formSchema = z.object({
   colorId: z.string().min(1),
   isFeatured: z.boolean().default(false).optional(),
   isArchived: z.boolean().default(false).optional(),
+  description: z.string().min(1),
+  quantity: z.number().default(0),
 });
 
 type ProductFormValues = z.infer<typeof formSchema>;
@@ -93,6 +96,8 @@ const ProductForm: React.FC<ProductFormProps> = ({
           colorId: "",
           isFeatured: false,
           isArchived: false,
+          description: "",
+          quantity: 0,
         },
     resolver: zodResolver(formSchema),
   });
@@ -205,6 +210,23 @@ const ProductForm: React.FC<ProductFormProps> = ({
                 </FormItem>
               )}
             />
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Product Name</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      {...field}
+                      disabled={loading}
+                      placeholder="Product Description"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             <FormField
               control={form.control}
@@ -217,6 +239,24 @@ const ProductForm: React.FC<ProductFormProps> = ({
                       {...field}
                       disabled={loading}
                       placeholder="999.99"
+                      inputMode="numeric"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="quantity"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Quantity</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      disabled={loading}
+                      placeholder="0"
                       inputMode="numeric"
                     />
                   </FormControl>

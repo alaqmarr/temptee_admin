@@ -22,6 +22,8 @@ export async function POST(
       isFeatured,
       isArchived,
       price,
+      description,
+      quantity
     } = body;
 
     if (!name) {
@@ -70,6 +72,8 @@ export async function POST(
         colorId,
         isFeatured,
         isArchived,
+        description,
+        quantity,
         storeId: params.storeId,
         images: {
           createMany: {
