@@ -59,7 +59,7 @@ const formSchema = z.object({
   isFeatured: z.boolean().default(false).optional(),
   isArchived: z.boolean().default(false).optional(),
   description: z.string().min(1),
-  quantity: z.number().default(0),
+  quantity: z.coerce.number().default(0)
 });
 
 type ProductFormValues = z.infer<typeof formSchema>;
@@ -254,6 +254,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
                   <FormLabel>Quantity</FormLabel>
                   <FormControl>
                     <Input
+                    type="number"
                       {...field}
                       disabled={loading}
                       placeholder="0"
