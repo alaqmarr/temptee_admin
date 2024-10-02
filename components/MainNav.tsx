@@ -2,7 +2,18 @@
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
-import React from "react";
+import React, { useState } from "react";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "./ui/sheet";
+import { MenuIcon } from "lucide-react";
+import { Separator } from "./ui/separator";
 
 export function MainNav({
   className,
@@ -10,17 +21,13 @@ export function MainNav({
 }: React.HTMLAttributes<HTMLElement>) {
   const pathname = usePathname();
   const params = useParams();
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
 
   const routes = [
     {
       href: `/${params.storeId}`,
       label: "Overview",
       active: pathname === `/${params.storeId}`,
-    },
-    {
-      href: `/${params.storeId}/products`,
-      label: "Products",
-      active: pathname === `/${params.storeId}/products`,
     },
     {
       href: `/${params.storeId}/billboards`,
@@ -43,6 +50,11 @@ export function MainNav({
       active: pathname === `/${params.storeId}/colors`,
     },
     {
+      href: `/${params.storeId}/products`,
+      label: "Products",
+      active: pathname === `/${params.storeId}/products`,
+    },
+    {
       href: `/${params.storeId}/orders`,
       label: "Orders",
       active: pathname === `/${params.storeId}/orders`,
@@ -53,22 +65,58 @@ export function MainNav({
       active: pathname === `/${params.storeId}/settings`,
     },
   ];
+
+  const handleSheetClose = () => {
+    setIsSheetOpen(false);
+  };
   return (
-    <nav className={cn("flex items-center space-x-4 lg:space-x-6", className)}>
-      {routes.map((route) => (
-        <Link
-          key={route.href}
-          href={route.href}
-          className={cn(
-            "text-sm font-medium transition-colors hover:text-primary",
-            route.active
-              ? "text-black dark:text-white"
-              : "text-muted-foreground"
-          )}
-        >
-          {route.label}
-        </Link>
-      ))}
+    <nav className={cn("w-full flex items-center space-x-4 lg:space-x-6", className)}>
+      <div className="hidden lg:flex items-center space-x-4 lg:space-x-6">
+        {routes.map((route) => (
+          <Link
+            key={route.href}
+            href={route.href}
+            className={cn(
+              "text-sm font-medium transition-colors hover:text-primary",
+              route.active
+                ? "text-black dark:text-white"
+                : "text-muted-foreground"
+            )}
+          >
+            {route.label}
+          </Link>
+        ))}
+      </div>
+      <div className="flex lg:hidden flex-col items-center justify-items-center self-end">
+        <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+          <SheetTrigger asChild onClick={() => setIsSheetOpen(true)}>
+            <MenuIcon />
+          </SheetTrigger>
+          <SheetContent>
+            <SheetHeader>
+              <SheetTitle>QUICK ACCESS</SheetTitle>
+              <Separator />
+              <SheetDescription className="flex flex-col items-start justify-items-center gap-y-4">
+                {routes.map((route) => (
+                  <Link
+                    key={route.href}
+                    href={route.href}
+                    className={cn(
+                      "text-sm font-medium transition-colors hover:text-primary",
+                      route.active
+                        ? "text-black dark:text-white"
+                        : "text-muted-foreground"
+                    )}
+                    onClick={handleSheetClose}
+                  >
+                    {route.label}
+                  </Link>
+                ))}
+              </SheetDescription>
+            </SheetHeader>
+          </SheetContent>
+        </Sheet>
+      </div>
     </nav>
   );
 }
