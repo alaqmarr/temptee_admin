@@ -17,8 +17,8 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Temptee | Dashboard",
-  description: "Temptee store dashboard",
+  title: "MyStore | alaqmar.tech",
+  description: "Manage your store efficiently and seamlessly with this pre-built store manager.",
 };
 
 export default function RootLayout({
