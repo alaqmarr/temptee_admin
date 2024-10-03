@@ -1,7 +1,32 @@
 import prismadb from "@/lib/prismadb";
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
+// Function to generate the initial slug from the label
+function generateSlug(label: string) {
+  return label
+    .toLowerCase()
+    .replace(/\s+/g, "-")
+    .replace(/[^\w\-]+/g, "");
+}
 
+// Function to ensure the slug is unique by appending a number if necessary
+async function generateUniqueSlug(label: string, storeId: string) {
+  let slug = generateSlug(label);
+  let existingBillboard = await prismadb.product.findFirst({
+    where: { name: slug, storeId },
+  });
+
+  let counter = 1;
+  while (existingBillboard) {
+    slug = `${generateSlug(label)}_${counter}`;
+    existingBillboard = await prismadb.product.findFirst({
+      where: { name: slug, storeId },
+    });
+    counter++;
+  }
+
+  return slug;
+}
 export async function POST(
   req: Request,
   { params }: { params: { storeId: string } }
@@ -23,7 +48,7 @@ export async function POST(
       isArchived,
       price,
       description,
-      quantity
+      quantity,
     } = body;
 
     if (!name) {
@@ -63,8 +88,11 @@ export async function POST(
       return new NextResponse("Store not found", { status: 404 });
     }
 
+    const unique = await generateUniqueSlug(name, params.storeId);
+
     const product = await prismadb.product.create({
       data: {
+        id: unique,
         name,
         price,
         categoryId,
@@ -77,9 +105,7 @@ export async function POST(
         storeId: params.storeId,
         images: {
           createMany: {
-            data: [
-              ...images.map((image: { url: string }) => image),
-            ]
+            data: [...images.map((image: { url: string }) => image)],
           },
         },
       },
