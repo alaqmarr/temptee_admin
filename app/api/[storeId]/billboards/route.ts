@@ -10,13 +10,27 @@ function generateSlug(label: string) {
     .replace(/[^\w\-]+/g, "");
 }
 
-// Function to ensure the slug is unique by appending a number if necessary
-function generateUniqueSlug(label: string, storeId: string) {
-  const replace_label = generateSlug(label);
+// Function to ensure the slug is unique by appending the store ID and checking the database
+async function generateUniqueSlug(label: string, storeId: string) {
+  const baseSlug = generateSlug(label);
+  let uniqueSlug = baseSlug + "-" + storeId;
 
-  const slug = replace_label + "-" + storeId;
+  // Check if the generated slug exists in the database
+  const existingSlug = await prismadb.billboard.findFirst({
+    where: { id: uniqueSlug },
+  });
 
-  return slug;
+  // If it already exists, append a counter
+  let counter = 1;
+  while (existingSlug) {
+    uniqueSlug = `${baseSlug}-${storeId}-${counter}`;
+    const existingSlug = await prismadb.billboard.findFirst({
+      where: { id: uniqueSlug },
+    });
+    counter++;
+  }
+
+  return uniqueSlug;
 }
 
 export async function POST(
@@ -32,12 +46,16 @@ export async function POST(
     const body = await req.json();
     const { label, imageURL } = body;
 
+    // Validate required fields
     if (!label || !imageURL) {
-      return new NextResponse("Label and Image URL are required.", {
-        status: 400,
-      });
+      return new NextResponse("Label and Image URL are required.", { status: 400 });
     }
 
+    if (!params.storeId) {
+      return new NextResponse("Store ID is required.", { status: 400 });
+    }
+
+    // Check if the store belongs to the authenticated user
     const storeByUserId = await prismadb.store.findFirst({
       where: {
         id: params.storeId,
@@ -49,26 +67,13 @@ export async function POST(
       return new NextResponse("Store not found", { status: 404 });
     }
 
-    if (!params.storeId) {
-      return new NextResponse("Store ID is required.", {
-        status: 400,
-      });
-    }
+    // Generate a unique slug for the billboard label
+    const uniqueSlug = await generateUniqueSlug(label, params.storeId);
 
-    // Generate unique slug for the billboard label
-    const checkId = await prismadb.billboard.findFirst({
-      where: {
-        id: label,
-      },
-    });
-
-    const uniqueSlug = checkId
-      ? generateUniqueSlug(label, params.storeId)
-      : label;
-
+    // Create the new billboard in the database
     const billboard = await prismadb.billboard.create({
       data: {
-        id: uniqueSlug,
+        id: uniqueSlug, // Use the unique slug as the ID
         label: label,
         imageURL,
         storeId: params.storeId,
@@ -88,9 +93,7 @@ export async function GET(
 ) {
   try {
     if (!params.storeId) {
-      return new NextResponse("Store ID is required.", {
-        status: 400,
-      });
+      return new NextResponse("Store ID is required.", { status: 400 });
     }
 
     const billboards = await prismadb.billboard.findMany({

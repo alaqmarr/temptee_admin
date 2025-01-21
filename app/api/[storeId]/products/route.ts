@@ -1,22 +1,38 @@
 import prismadb from "@/lib/prismadb";
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
-// Function to generate the initial slug from the label
-function generateSlug(label: string) {
+
+// Function to generate a slug from a label
+function generateSlug(label: string): string {
   return label
     .toLowerCase()
-    .replace(/\s+/g, "-")
-    .replace(/[^\w\-]+/g, "");
+    .replace(/\s+/g, "-") // Replace spaces with hyphens
+    .replace(/[^\w\-]/g, ""); // Remove non-word characters
 }
 
-// Function to ensure the slug is unique by appending a number if necessary
-function generateUniqueSlug(label: string, storeId: string) {
-  const replace_label = generateSlug(label);
+// Function to ensure the slug is unique by appending store ID or counter if necessary
+async function generateUniqueSlug(label: string, storeId: string): Promise<string> {
+  const baseSlug = generateSlug(label);
 
-  const slug = replace_label+"-"+storeId;
+  // Check if the base slug is already unique
+  const existingSlug = await prismadb.product.findFirst({ where: { id: baseSlug } });
+  if (!existingSlug) {
+    return baseSlug; // Return the base slug if it's unique
+  }
 
-  return slug;
+  // If not unique, append the store ID and/or counter
+  let uniqueSlug = `${baseSlug}-${storeId}`;
+  let counter = 1;
+
+  while (await prismadb.product.findFirst({ where: { id: uniqueSlug } })) {
+    uniqueSlug = `${baseSlug}-${storeId}-${counter}`;
+    counter++;
+  }
+
+  return uniqueSlug;
 }
+
+// POST API Endpoint for creating a product
 export async function POST(
   req: Request,
   { params }: { params: { storeId: string } }
@@ -26,8 +42,8 @@ export async function POST(
     if (!userId) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
-    const body = await req.json();
 
+    const body = await req.json();
     const {
       name,
       images,
@@ -41,12 +57,13 @@ export async function POST(
       quantity,
     } = body;
 
+    // Validate required fields
     if (!name) {
       return new NextResponse("Name is required.", { status: 400 });
     }
 
     if (!images || !images.length) {
-      return new NextResponse("Images is required.", { status: 400 });
+      return new NextResponse("Images are required.", { status: 400 });
     }
 
     if (!categoryId) {
@@ -62,9 +79,7 @@ export async function POST(
     }
 
     if (!params.storeId) {
-      return new NextResponse("Store ID is required.", {
-        status: 400,
-      });
+      return new NextResponse("Store ID is required.", { status: 400 });
     }
 
     const storeByUserId = await prismadb.store.findFirst({
@@ -78,17 +93,13 @@ export async function POST(
       return new NextResponse("Store not found", { status: 404 });
     }
 
-    const checkId = await prismadb.product.findFirst({
-      where: {
-        id: name
-      },
-    })
+    // Generate a unique slug for the product
+    const uniqueSlug = await generateUniqueSlug(name, params.storeId);
 
-    const uniqueSlug = checkId ? generateUniqueSlug(name, params.storeId) : name;
-
+    // Create the product
     const product = await prismadb.product.create({
       data: {
-        id: uniqueSlug,
+        id: uniqueSlug, // Use the unique slug as the ID
         name,
         price,
         categoryId,
@@ -101,7 +112,7 @@ export async function POST(
         storeId: params.storeId,
         images: {
           createMany: {
-            data: [...images.map((image: { url: string }) => image)],
+            data: images.map((image: { url: string }) => image),
           },
         },
       },
@@ -114,6 +125,7 @@ export async function POST(
   }
 }
 
+// GET API Endpoint for fetching products
 export async function GET(
   req: Request,
   { params }: { params: { storeId: string } }
@@ -126,9 +138,7 @@ export async function GET(
 
   try {
     if (!params.storeId) {
-      return new NextResponse("Store ID is required.", {
-        status: 400,
-      });
+      return new NextResponse("Store ID is required.", { status: 400 });
     }
 
     const products = await prismadb.product.findMany({

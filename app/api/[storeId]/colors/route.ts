@@ -1,22 +1,38 @@
 import prismadb from "@/lib/prismadb";
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
+
 // Function to generate the initial slug from the label
 function generateSlug(label: string) {
   return label
     .toLowerCase()
-    .replace(/\s+/g, "-")
-    .replace(/[^\w\-]+/g, "");
+    .replace(/\s+/g, "-") // Replace spaces with hyphens
+    .replace(/[^\w\-]+/g, ""); // Remove non-word characters
 }
 
-// Function to ensure the slug is unique by appending a number if necessary
-function generateUniqueSlug(label: string, storeId: string) {
-  const replace_label = generateSlug(label);
+// Function to ensure the slug is unique by appending the store ID if necessary
+async function generateUniqueSlug(label: string, storeId: string) {
+  const baseSlug = generateSlug(label);
 
-  const slug = replace_label+"-"+storeId;
+  // Check if the base slug already exists in the database
+  const existingSlug = await prismadb.color.findFirst({ where: { id: baseSlug } });
+  if (!existingSlug) {
+    return baseSlug; // If unique, return the base slug
+  }
 
-  return slug;
+  // If not unique, append the store ID to make it unique
+  let uniqueSlug = `${baseSlug}-${storeId}`;
+  let counter = 1;
+
+  // Check if the slug with store ID is unique, if not, add a counter
+  while (await prismadb.color.findFirst({ where: { id: uniqueSlug } })) {
+    uniqueSlug = `${baseSlug}-${storeId}-${counter}`;
+    counter++;
+  }
+
+  return uniqueSlug;
 }
+
 export async function POST(
   req: Request,
   { params }: { params: { storeId: string } }
@@ -26,15 +42,16 @@ export async function POST(
     if (!userId) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
-    const body = await req.json();
 
+    const body = await req.json();
     const { name, value } = body;
+
+    // Validate required fields
     if (!name || !value) {
-      return new NextResponse("Label and Image URL are required.", {
-        status: 400,
-      });
+      return new NextResponse("Label and Image URL are required.", { status: 400 });
     }
 
+    // Check if the store belongs to the authenticated user
     const storeByUserId = await prismadb.store.findFirst({
       where: {
         id: params.storeId,
@@ -46,21 +63,13 @@ export async function POST(
       return new NextResponse("Store not found", { status: 404 });
     }
 
-    if (!params.storeId) {
-      return new NextResponse("Store ID is required.", {
-        status: 400,
-      });
-    }
-    const checkId = await prismadb.color.findFirst({
-      where: {
-        id: name
-      },
-    })
+    // Generate a unique slug for the color
+    const uniqueSlug = await generateUniqueSlug(name, params.storeId);
 
-    const uniqueSlug = checkId ? generateUniqueSlug(name, params.storeId) : name;
+    // Create the new color in the database
     const color = await prismadb.color.create({
       data: {
-        id: uniqueSlug,
+        id: uniqueSlug, // Use the unique slug as the ID
         name,
         value,
         storeId: params.storeId,
@@ -80,9 +89,7 @@ export async function GET(
 ) {
   try {
     if (!params.storeId) {
-      return new NextResponse("Store ID is required.", {
-        status: 400,
-      });
+      return new NextResponse("Store ID is required.", { status: 400 });
     }
 
     const colors = await prismadb.color.findMany({
