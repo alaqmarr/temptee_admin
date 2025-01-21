@@ -12,19 +12,9 @@ function generateSlug(label: string) {
 
 // Function to ensure the slug is unique by appending a number if necessary
 async function generateUniqueSlug(label: string, storeId: string) {
-  let slug = generateSlug(label);
-  let existingBillboard = await prismadb.billboard.findFirst({
-    where: { label: slug, storeId },
-  });
+  const replace_label = generateSlug(label);
 
-  let counter = 1;
-  while (existingBillboard) {
-    slug = `${generateSlug(label)}_${counter}`;
-    existingBillboard = await prismadb.billboard.findFirst({
-      where: { label: slug, storeId },
-    });
-    counter++;
-  }
+  const slug = replace_label + "-" + storeId;
 
   return slug;
 }
@@ -66,7 +56,15 @@ export async function POST(
     }
 
     // Generate unique slug for the billboard label
-    const uniqueSlug = await generateUniqueSlug(label, params.storeId);
+    const checkId = await prismadb.billboard.findFirst({
+      where: {
+        id: label,
+      },
+    });
+
+    const uniqueSlug = checkId
+      ? generateUniqueSlug(label, params.storeId)
+      : label;
 
     const billboard = await prismadb.billboard.create({
       data: {

@@ -32,6 +32,7 @@ model Billboard {
   updatedAt  DateTime   @updatedAt
 
   @@index([storeId])
+  
 }
 
 model Category {
