@@ -11,7 +11,7 @@ function generateSlug(label: string) {
 }
 
 // Function to ensure the slug is unique by appending a number if necessary
-async function generateUniqueSlug(label: string, storeId: string) {
+function generateUniqueSlug(label: string, storeId: string) {
   const replace_label = generateSlug(label);
 
   const slug = replace_label + "-" + storeId;

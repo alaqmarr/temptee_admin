@@ -10,10 +10,10 @@ function generateSlug(label: string) {
 }
 
 // Function to ensure the slug is unique by appending a number if necessary
-async function generateUniqueSlug(label: string, storeId: string) {
+function generateUniqueSlug(label: string, storeId: string) {
   const replace_label = generateSlug(label);
 
-  const slug = replace_label+"-"+storeId;
+  const slug = replace_label + "-" + storeId;
 
   return slug;
 }
@@ -54,11 +54,13 @@ export async function POST(
 
     const checkId = await prismadb.size.findFirst({
       where: {
-        id: name
+        id: name,
       },
-    })
+    });
 
-    const uniqueSlug = checkId ? generateUniqueSlug(name, params.storeId) : name;
+    const uniqueSlug = checkId
+      ? generateUniqueSlug(name, params.storeId)
+      : name;
 
     const size = await prismadb.size.create({
       data: {
