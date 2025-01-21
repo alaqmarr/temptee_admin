@@ -18,11 +18,23 @@ const Navbar = async () => {
       userId,
     },
   });
+
   return (
     <div className="border-b">
       <div className="flex h-16 items-center px-4">
-        <StoreSwitcher items={stores} />
-        <MainNav className="mx-3" />
+        {/* Small screens: MainNav first */}
+        <div className="flex flex-row items-center justify-evenly h-16 sm:flex-row lg:hidden w-[80%]">
+          <MainNav />
+          <StoreSwitcher items={stores} />
+        </div>
+
+        {/* Large screens: StoreSwitcher first */}
+        <div className="hidden h-16 justify-evenly lg:flex lg:items-center lg:space-x-4 w-[80%]">
+          <StoreSwitcher items={stores} />
+          <MainNav />
+        </div>
+
+        {/* User button */}
         <div className="ml-auto flex items-center space-x-4">
           <UserButton afterSignOutUrl="/" />
         </div>

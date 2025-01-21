@@ -92,7 +92,7 @@ export function MainNav({
           <SheetTrigger asChild onClick={() => setIsSheetOpen(true)}>
             <MenuIcon />
           </SheetTrigger>
-          <SheetContent>
+          <SheetContent side={"left"}>
             <SheetHeader>
               <SheetTitle>QUICK ACCESS</SheetTitle>
               <Separator />
