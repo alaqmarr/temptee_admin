@@ -104,7 +104,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({ value, onChange }) => {
             editor
               ?.chain()
               .focus()
-              .insertTable({ rows: 3, cols: 3, withHeaderRow: true })
+              .insertTable({ rows: 2, cols: 2, withHeaderRow: true })
               .run()
           }
           disabled={!editor?.can().chain().focus().insertTable().run()}
