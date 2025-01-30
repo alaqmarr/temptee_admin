@@ -70,7 +70,7 @@ export function MainNav({
     setIsSheetOpen(false);
   };
   return (
-    <nav className={cn("w-full flex items-center space-x-4 lg:space-x-6", className)}>
+    <nav className={cn("w-full flex items-center space-x-4 lg:space-x-6 z-[1000]", className)}>
       <div className="hidden lg:flex items-center space-x-4 lg:space-x-6">
         {routes.map((route) => (
           <Link
@@ -92,7 +92,7 @@ export function MainNav({
           <SheetTrigger asChild onClick={() => setIsSheetOpen(true)}>
             <MenuIcon />
           </SheetTrigger>
-          <SheetContent side={"left"}>
+          <SheetContent side={"left"} className="z-[1000]">
             <SheetHeader>
               <SheetTitle>QUICK ACCESS</SheetTitle>
               <Separator />

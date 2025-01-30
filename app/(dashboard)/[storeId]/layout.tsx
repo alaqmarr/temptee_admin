@@ -1,4 +1,5 @@
 import Navbar from "@/components/Navbar";
+import Notifications from "@/components/Notifications";
 import prismadb from "@/lib/prismadb";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
@@ -22,6 +23,9 @@ export default async function DashboardLayout({
       id: params.storeId,
       userId,
     },
+    include: {
+      notifications: true,
+    }
   });
 
   if (!store) {
@@ -30,7 +34,14 @@ export default async function DashboardLayout({
 
   return (
     <>
-      <Navbar/>
+      <div className="stickyNavbar">
+        <Navbar />
+      </div>
+      {store.notifications.length > 0 && (
+        <div className="w-[100%] flex flex-col items-center justify-center">
+          <Notifications params={params.storeId} />
+        </div>
+      )}
       {children}
     </>
   );
