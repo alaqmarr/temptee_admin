@@ -34,12 +34,13 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import * as z from "zod";
+import RichTextEditor from "./RichTextEditor";
 interface ProductFormProps {
   initialData:
-    | (Product & {
-        images: Image[];
-      })
-    | null;
+  | (Product & {
+    images: Image[];
+  })
+  | null;
   categories: Category[];
   sizes: Size[];
   colors: Color[];
@@ -84,21 +85,21 @@ const ProductForm: React.FC<ProductFormProps> = ({
   const form = useForm<ProductFormValues>({
     defaultValues: initialData
       ? {
-          ...initialData,
-          price: parseFloat(String(initialData?.price)),
-        }
+        ...initialData,
+        price: parseFloat(String(initialData?.price)),
+      }
       : {
-          name: "",
-          images: [],
-          price: 0,
-          categoryId: "",
-          sizeId: "",
-          colorId: "",
-          isFeatured: false,
-          isArchived: false,
-          description: "",
-          quantity: 0,
-        },
+        name: "",
+        images: [],
+        price: 0,
+        categoryId: "",
+        sizeId: "",
+        colorId: "",
+        isFeatured: false,
+        isArchived: false,
+        description: "",
+        quantity: 0,
+      },
     resolver: zodResolver(formSchema),
   });
 
@@ -215,12 +216,11 @@ const ProductForm: React.FC<ProductFormProps> = ({
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Product Name</FormLabel>
+                  <FormLabel>Product Description</FormLabel>
                   <FormControl>
-                    <Textarea
-                      {...field}
-                      disabled={loading}
-                      placeholder="Product Description"
+                    <RichTextEditor
+                      value={field.value}
+                      onChange={(value) => field.onChange(value)}
                     />
                   </FormControl>
                   <FormMessage />
@@ -254,7 +254,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
                   <FormLabel>Quantity</FormLabel>
                   <FormControl>
                     <Input
-                    type="number"
+                      type="number"
                       {...field}
                       disabled={loading}
                       placeholder="0"
