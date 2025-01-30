@@ -60,6 +60,11 @@ export function MainNav({
       active: pathname === `/${params.storeId}/orders`,
     },
     {
+      href: `/${params.storeId}/contact`,
+      label: "Contact",
+      active: pathname === `/${params.storeId}/contact`,
+    },
+    {
       href: `/${params.storeId}/settings`,
       label: "Settings",
       active: pathname === `/${params.storeId}/settings`,

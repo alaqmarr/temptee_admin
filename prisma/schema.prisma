@@ -19,6 +19,7 @@ model Store {
   orders        Order[]                 @relation("StoreToOrder")
   notifications Notifications[]         @relation("StoreToNotifications")
   archive       ArchriveNotifications[] @relation("StoreToArchive")
+  contactForm   ContactFormData[]       @relation("StoreToContact")
   createdAt     DateTime                @default(now())
   updatedAt     DateTime                @updatedAt
 }
@@ -168,4 +169,15 @@ model ArchriveNotifications {
   updatedAt DateTime @updatedAt
 
   @@index([storeId])
+}
+
+model ContactFormData {
+  id        String   @id @default(uuid())
+  name      String
+  email     String?
+  message   String
+  storeId   String
+  store     Store    @relation("StoreToContact", fields: [storeId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
