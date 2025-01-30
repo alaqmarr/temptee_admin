@@ -7,6 +7,7 @@ import { Table } from "@tiptap/extension-table";
 import { TableRow } from "@tiptap/extension-table-row";
 import { TableHeader } from "@tiptap/extension-table-header";
 import { TableCell } from "@tiptap/extension-table-cell";
+
 import {
   Bold,
   Italic,
@@ -138,7 +139,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({ value, onChange }) => {
           <Trash2 className="h-4 w-4" />
         </Button>
       </div>
-      <EditorContent editor={editor} />
+      <EditorContent editor={editor} className="ProseMirror" />
     </div>
   );
 };
