@@ -27,7 +27,7 @@ const OrderClient: React.FC<OrderClientProps> = ({
         />
       </div>
       <Separator />
-      <DataTable columns={columns} data={data} searchKey="label"/>
+      <DataTable columns={columns} data={data} searchKey="Name"/>
       <Heading title="API Config" description="API Routes to manage contacts from front-end" />
       <Separator/>
       <ApiList entityName="contact-form" entityIdName="contactId"/>

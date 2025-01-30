@@ -7,7 +7,7 @@ import { CldUploadWidget } from "next-cloudinary";
 
 interface ImageUploadProps {
   disabled?: boolean;
-  onChange: (value: string) => void;
+  onChange: (value: string[]) => void; // Update to handle multiple URLs
   onRemove: (value: string) => void;
   value: string[];
 }
@@ -24,9 +24,15 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   }, []);
 
   const onUpload = (result: any) => {
-    onChange(result.info.secure_url);
+    // Handle multiple uploaded files
+    if (result.event === "success") {
+      const newUrls = result.info.files.map((file: any) => file.secure_url);
+      onChange([...value, ...newUrls]); // Append new URLs to the existing ones
+    }
   };
+
   if (!isMounted) return null;
+
   return (
     <div>
       <div className="mb-4 flex items-center gap-4">
@@ -50,7 +56,14 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
           </div>
         ))}
       </div>
-      <CldUploadWidget onSuccess={onUpload} uploadPreset="asdf1234">
+      <CldUploadWidget
+        onSuccess={onUpload}
+        uploadPreset="asdf1234"
+        options={{
+          multiple: true, // Enable multiple file uploads
+          maxFiles: 8, // Optional: Limit the number of files that can be uploaded
+        }}
+      >
         {({ open }) => {
           const onClick = () => {
             open();
@@ -64,7 +77,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
               variant={"secondary"}
             >
               <ImagePlusIcon className="w-4 h-4" />
-              Upload Image
+              Upload Images
             </Button>
           );
         }}

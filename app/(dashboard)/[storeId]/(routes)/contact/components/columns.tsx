@@ -9,12 +9,13 @@ export type OrderColumn = {
   id: string
   email: string
   message: string
+  name: string
 }
 
 export const columns: ColumnDef<OrderColumn>[] = [
   {
-    accessorKey: "ID",
-    header: "id",
+    accessorKey: "Name",
+    header: "name",
   },
   {
     accessorKey: "Email",
