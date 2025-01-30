@@ -82,6 +82,10 @@ const ProductForm: React.FC<ProductFormProps> = ({
   const action = initialData ? "Save Changes" : "Create Product";
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [imageUrls, setImageUrls] = useState<string[]>([]);
+  const handleRemove = (url: string) => {
+    setImageUrls((prev) => prev.filter((item) => item !== url));
+  };
   const form = useForm<ProductFormValues>({
     defaultValues: initialData
       ? {
@@ -170,29 +174,23 @@ const ProductForm: React.FC<ProductFormProps> = ({
           className="space-y-8 w-full"
         >
           <FormField
-            control={form.control}
-            name="images"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Images</FormLabel>
-                <FormControl>
-                  <ImageUpload
-                    value={field.value.map((image) => image.url)}
-                    onChange={(url) =>
-                      field.onChange([...field.value, { url }])
-                    }
-                    onRemove={(url) =>
-                      field.onChange([
-                        ...field.value.filter((current) => current.url !== url),
-                      ])
-                    }
-                    disabled={loading}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+  control={form.control}
+  name="images"
+  render={({ field }) => (
+    <FormItem>
+      <FormLabel>Images</FormLabel>
+      <FormControl>
+      <ImageUpload
+  value={field.value.map((image) => image.url)} // Ensure this is an array of valid URLs
+  onChange={(url) => field.onChange([...field.value, { url }])}
+  onRemove={(url) => field.onChange(field.value.filter((current) => current.url !== url))}
+  disabled={loading}
+/>
+      </FormControl>
+      <FormMessage />
+    </FormItem>
+  )}
+/>
           <div className="grid grid-cols-1 lg:grid-cols-3 md:grid-cols-2 gap-8">
             <FormField
               control={form.control}
