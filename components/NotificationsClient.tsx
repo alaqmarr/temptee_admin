@@ -111,7 +111,6 @@ const NotificationItem = ({
                 <AlertTitle className='text-sm'>
                     {format(new Date(notification.createdAt), 'EEEE dd/MM/yyyy')} | &nbsp;
                     {notification.type}
-
                 </AlertTitle>
                 <AlertDescription className="w-full break-all flex flex-col items-center justify-center text-start">
                     <div className="w-full">{notification.message}</div>
