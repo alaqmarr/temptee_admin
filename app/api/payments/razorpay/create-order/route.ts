@@ -1,7 +1,7 @@
 import { RazorpayClient } from "@/lib/payments";
 import { NextResponse } from "next/server";
 
-export default async function GET(req: Request) {
+export async function GET(req: Request) {
   const razorpay = RazorpayClient;
 
   if (!razorpay) {
