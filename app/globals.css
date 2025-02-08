@@ -2,7 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
-html, body {
+html,
+body {
   height: 100%;
 }
 /* If you're using a global CSS file */
@@ -52,6 +53,73 @@ html, body {
 .ProseMirror tr:hover {
   background-color: #f5f5f5;
 }
+
+.ProseMirror code {
+  background-color: #f5f5f5;
+  padding: 0.2rem 0.4rem;
+  border-radius: 0.2rem;
+}
+
+.ProseMirror blockquote {
+  background-color: #f5f5f5;
+  padding: 0.5rem 1rem;
+  border-left: 4px solid #000;
+  margin: 1rem 0;
+}
+
+.ProseMirror h1 {
+  font-size: 2rem;
+  font-weight: bold;
+  margin: 1rem 0;
+}
+
+.ProseMirror h2 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 1rem 0;
+}
+
+.ProseMirror h3 {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin: 1rem 0;
+}
+
+.ProseMirror p {
+  margin: 1rem 0;
+}
+
+.ProseMirror a {
+  color: #0071e2;
+  text-decoration: underline;
+}
+
+.ProseMirror img {
+  max-width: 100%;
+  height: auto;
+  margin: 1rem 0;
+}
+
+.ProseMirror pre {
+  background-color: #f5f5f5;
+  padding: 0.5rem 1rem;
+  border-radius: 0.2rem;
+  margin: 1rem 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -142,12 +210,15 @@ html, body {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
-
-/* From Uiverse.io by satyamchaudharydev */ 
+/* From Uiverse.io by satyamchaudharydev */
 .loader {
   display: block;
   --height-of-loader: 4px;
@@ -155,7 +226,7 @@ html, body {
   width: 130px;
   height: var(--height-of-loader);
   border-radius: 30px;
-  background-color: rgba(0,0,0,0.2);
+  background-color: rgba(0, 0, 0, 0.2);
   position: relative;
 }
 
@@ -169,7 +240,6 @@ html, body {
   height: 100%;
   border-radius: 30px;
   animation: moving 1s ease-in-out infinite;
-  ;
 }
 
 @keyframes moving {

@@ -35,6 +35,7 @@ import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import * as z from "zod";
 import RichTextEditor from "./RichTextEditor";
+import TipTap from "@/components/TipTap";
 interface ProductFormProps {
   initialData:
   | (Product & {
@@ -216,10 +217,11 @@ const ProductForm: React.FC<ProductFormProps> = ({
                 <FormItem>
                   <FormLabel>Product Description</FormLabel>
                   <FormControl>
-                    <RichTextEditor
+                    <TipTap
                       value={field.value}
                       onChange={(value) => field.onChange(value)}
                     />
+
                   </FormControl>
                   <FormMessage />
                 </FormItem>

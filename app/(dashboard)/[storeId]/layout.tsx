@@ -1,3 +1,4 @@
+import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import Notifications from "@/components/Notifications";
 import prismadb from "@/lib/prismadb";
@@ -43,6 +44,8 @@ export default async function DashboardLayout({
         </div>
       )}
       {children}
+
+      <Footer />
     </>
   );
 }
