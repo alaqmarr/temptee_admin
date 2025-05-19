@@ -39,6 +39,7 @@ export async function POST(
   req: Request,
   { params }: { params: { storeId: string } }
 ) {
+  const storeId = params.storeId;
   try {
     const body = await req.json();
     const { name, email, message } = body;
@@ -53,13 +54,13 @@ export async function POST(
         name,
         email,
         message,
-        storeId: params.storeId,
+        storeId: storeId,
       },
     });
 
     return NextResponse.json(color);
   } catch (error) {
-    console.error("[COLOR_POST]", error);
+    console.error("[CONTACT_POST]", error);
     return new NextResponse("Internal Error", { status: 500 });
   }
 }
@@ -81,7 +82,7 @@ export async function GET(
 
     return NextResponse.json(colors);
   } catch (error) {
-    console.error("[COLORS_GET]", error);
+    console.error("[CONTACT_GET]", error);
     return new NextResponse("Internal Error", { status: 500 });
   }
 }
